@@ -33,6 +33,7 @@ frontend/coverage/
 
 .env
 .env.local
+backend/src/main/resources/application-local.properties
 
 
 # =====================

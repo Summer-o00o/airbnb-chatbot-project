@@ -22,4 +22,19 @@ public class SearchService {
     public List<Listing> findAllListings() {
         return listingRepository.findAll();
     }
+
+public List<Listing> searchWithFilters(
+        String location,
+        Integer bedrooms,
+        Boolean hasBackyard,
+        Double minQuietScore
+) {
+    return listingRepository.findAll().stream()
+            .filter(listing -> location == null || 
+                    (listing.getLocation() != null && listing.getLocation().equalsIgnoreCase(location)))
+            .filter(listing -> bedrooms == null || listing.getBedrooms() == bedrooms)
+            .filter(listing -> hasBackyard == null || listing.isHasBackyard() == hasBackyard)
+            .filter(listing -> minQuietScore == null || listing.getQuietScore() >= minQuietScore)
+            .toList();
+}
 }
