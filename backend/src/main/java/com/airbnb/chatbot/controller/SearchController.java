@@ -1,7 +1,7 @@
 package com.airbnb.chatbot.controller;
 
 import com.airbnb.chatbot.service.SearchService;
-import com.airbnb.chatbot.model.entity.Listing;
+import com.airbnb.chatbot.model.dto.ListingDTO;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +20,15 @@ public class SearchController {
     }
 
     @GetMapping
-    public List<Listing> searchByLocation(@RequestParam String location) {
+    public List<ListingDTO> searchByLocation(@RequestParam String location) {
         System.out.println("SEARCH CONTROLLER CALLED: " + location);
 
         return searchService.searchByLocation(location);
     }    
 
     @GetMapping("/all")
-    public List<Listing> findAllListings() {
-        List<Listing> listings = searchService.findAllListings();
+    public List<ListingDTO> findAllListings() {
+        List<ListingDTO> listings = searchService.findAllListings();
         System.out.println("ALL LISTINGS SIZE: " + listings.size());
         System.out.println("ALL LISTINGS: " + listings);
         return listings;

@@ -6,35 +6,48 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import com.airbnb.chatbot.model.dto.ListingDTO;
+import com.airbnb.chatbot.model.mapper.ListingMapper;
+
 @Service
 public class SearchService {
 
     private final ListingRepository listingRepository;
+    private final ListingMapper listingMapper;
 
-    public SearchService(ListingRepository listingRepository) {
+    public SearchService(ListingRepository listingRepository, ListingMapper listingMapper) {
         this.listingRepository = listingRepository;
+        this.listingMapper = listingMapper;
     }
 
-    public List<Listing> searchByLocation(String location) {
-        return listingRepository.findByLocationIgnoreCase(location);
+    public List<ListingDTO> searchByLocation(String location) {
+        return listingRepository.findByLocationIgnoreCase(location)
+                .stream()
+                .map(listingMapper::toDTO)
+                .toList();
     }
 
-    public List<Listing> findAllListings() {
-        return listingRepository.findAll();
+    public List<ListingDTO> findAllListings() {
+        return listingRepository.findAll()
+                .stream()
+                .map(listingMapper::toDTO)
+                .toList();
     }
 
-public List<Listing> searchWithFilters(
-        String location,
-        Integer bedrooms,
-        Boolean hasBackyard,
-        Double minQuietScore
-) {
-    return listingRepository.findAll().stream()
-            .filter(listing -> location == null || 
-                    (listing.getLocation() != null && listing.getLocation().equalsIgnoreCase(location)))
-            .filter(listing -> bedrooms == null || listing.getBedrooms() == bedrooms)
-            .filter(listing -> hasBackyard == null || listing.isHasBackyard() == hasBackyard)
-            .filter(listing -> minQuietScore == null || listing.getQuietScore() >= minQuietScore)
-            .toList();
-}
+    public List<ListingDTO> searchWithFilters(
+            String location,
+            Integer bedrooms,
+            Boolean hasBackyard,
+            Double minQuietScore
+    ) {
+        return listingRepository.findAll().stream()
+                .map(listingMapper::toDTO)
+                .filter(dto -> location == null ||
+                        (dto.getLocation() != null && dto.getLocation().equalsIgnoreCase(location)))
+                .filter(dto -> bedrooms == null || dto.getBedrooms() == bedrooms)
+                .filter(dto -> hasBackyard == null || dto.isHasBackyard() == hasBackyard)
+                .filter(dto -> minQuietScore == null ||
+                        (dto.getQuietScore() != null && dto.getQuietScore() >= minQuietScore))
+                .toList();
+    }
 }

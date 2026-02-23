@@ -11,6 +11,4 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     List<Listing> findByBedroomsGreaterThanEqual(int bedrooms);
 
     List<Listing> findByHasBackyardTrue();
-
-    List<Listing> findByQuietScoreGreaterThanEqual(double quietScore);
 }

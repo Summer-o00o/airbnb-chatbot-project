@@ -15,7 +15,7 @@ public class Listing {
     private Long id;
 
     private String title;
- 
+
     private String description;
 
     private String location;
@@ -28,11 +28,13 @@ public class Listing {
 
     private boolean hasBackyard;
 
-    private double quietScore;
-
     private double latitude;
 
     private double longitude;
 
-    private int reviewCount;
+    /** Prefilled review count (stored in DB). */
+    private Integer reviewCount;
+
+    /** Prefilled average quiet score 0–10 (stored in DB). */
+    private Double quietScore;
 }

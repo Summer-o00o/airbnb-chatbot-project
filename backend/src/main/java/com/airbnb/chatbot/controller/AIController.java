@@ -2,7 +2,9 @@ package com.airbnb.chatbot.controller;
 
 import com.airbnb.chatbot.model.dto.AIFilter;
 import com.airbnb.chatbot.model.dto.AIQueryRequest;
+import com.airbnb.chatbot.model.dto.ListingDTO;
 import com.airbnb.chatbot.model.entity.Listing;
+import com.airbnb.chatbot.model.mapper.ListingMapper;
 import com.airbnb.chatbot.service.AIService;
 import com.airbnb.chatbot.service.SearchService;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,9 @@ public class AIController {
     }
 
     @PostMapping("/search")
-    public List<Listing> aiSearch(@RequestBody AIQueryRequest request) {
+    public List<ListingDTO> aiSearch(@RequestBody AIQueryRequest request) {
         AIFilter filter = aiService.askAI(request.getQuery());
+
         return searchService.searchWithFilters(
                 filter.getLocation(),
                 filter.getBedrooms(),
