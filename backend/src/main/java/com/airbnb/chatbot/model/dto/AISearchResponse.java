@@ -16,4 +16,6 @@ public class AISearchResponse {
     private String message;
     /** When true, user mentioned quiet/安静; show Quiet Score on listing cards. */
     private Boolean showQuietScore;
+    /** The exact filters interpreted from the user's natural language query. */
+    private AIFilter filters;
 }

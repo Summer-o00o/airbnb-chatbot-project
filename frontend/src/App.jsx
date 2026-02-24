@@ -77,6 +77,7 @@ function App() {
   const [isSearching, setIsSearching] = useState(false);
   const [showQuietScore, setShowQuietScore] = useState(false);
   const [isLoadingDefault, setIsLoadingDefault] = useState(true);
+  const [aiFilters, setAiFilters] = useState(null);
 
   useEffect(() => {
     fetch(`${API_BASE}/ai/search`, {
@@ -109,6 +110,7 @@ function App() {
     setLastSearchedQuery(query);
     setInvalidQueryMessage(null);
     setListings([]);
+    setAiFilters(null);
     setIsSearching(true);
     fetch(`${API_BASE}/ai/search`, {
       method: "POST",
@@ -131,6 +133,8 @@ function App() {
           setInvalidQueryMessage(data.message);
         }
         setShowQuietScore(Boolean(data?.showQuietScore));
+         // Persist the exact filters the AI interpreted for this search
+        setAiFilters(data?.filters ?? null);
       })
       .catch((err) => {
         console.error("[Search]", err);
@@ -144,6 +148,7 @@ function App() {
     setQuery("");
     setHasSearched(false);
     setInvalidQueryMessage(null);
+    setAiFilters(null);
   };
 
   return (
@@ -276,6 +281,56 @@ function App() {
                   ? `No listings match your search for "${lastSearchedQuery.trim()}". Try different criteria or broaden your search.`
                   : "No listings found. Try adjusting your search."}
             </p>
+            {aiFilters && (
+              <div style={{ marginTop: "8px", fontSize: "0.9rem", color: "#555" }}>
+                <strong>Filters interpreted by AI:</strong>
+                <ul style={{ listStyle: "disc", paddingLeft: "20px", textAlign: "left" }}>
+                  <li>
+                    Location: {aiFilters.location && aiFilters.location.trim() ? aiFilters.location : "Any"}
+                  </li>
+                  <li>
+                    Bedrooms:{" "}
+                    {aiFilters.bedrooms == null
+                      ? "Any"
+                      : aiFilters.exactBedrooms
+                      ? `Exactly ${aiFilters.bedrooms}`
+                      : `At least ${aiFilters.bedrooms}`}
+                  </li>
+                  <li>
+                    Bathrooms:{" "}
+                    {aiFilters.bathrooms == null
+                      ? "Any"
+                      : aiFilters.exactBathrooms
+                      ? `Exactly ${aiFilters.bathrooms}`
+                      : `At least ${aiFilters.bathrooms}`}
+                  </li>
+                  <li>
+                    Backyard:{" "}
+                    {aiFilters.hasBackyard == null
+                      ? "Any"
+                      : aiFilters.hasBackyard
+                      ? "Must have a backyard"
+                      : "Backyard not required"}
+                  </li>
+                  <li>
+                    Quiet:{" "}
+                    {aiFilters.minQuietScore == null
+                      ? "Any"
+                      : `Quiet score \u2265 ${aiFilters.minQuietScore}`}
+                  </li>
+                  <li>
+                    Price:{" "}
+                    {aiFilters.minPrice == null && aiFilters.maxPrice == null
+                      ? "Any"
+                      : aiFilters.minPrice != null && aiFilters.maxPrice != null
+                      ? `$${aiFilters.minPrice} - $${aiFilters.maxPrice} / night`
+                      : aiFilters.minPrice != null
+                      ? `From $${aiFilters.minPrice} / night`
+                      : `Up to $${aiFilters.maxPrice} / night`}
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -345,6 +400,56 @@ function App() {
                 ? `Based on your search for "${lastSearchedQuery.trim()}", we found ${listings.length} ${listings.length === 1 ? "listing" : "listings"} that match your needs.`
                 : `We found ${listings.length} ${listings.length === 1 ? "listing" : "listings"} for you.`}
             </p>
+            {aiFilters && (
+              <div style={{ marginTop: "8px", fontSize: "0.9rem", color: "#555" }}>
+                <strong>Filters interpreted by AI:</strong>
+                <ul style={{ listStyle: "disc", paddingLeft: "20px" }}>
+                  <li>
+                    Location: {aiFilters.location && aiFilters.location.trim() ? aiFilters.location : "Any"}
+                  </li>
+                  <li>
+                    Bedrooms:{" "}
+                    {aiFilters.bedrooms == null
+                      ? "Any"
+                      : aiFilters.exactBedrooms
+                      ? `Exactly ${aiFilters.bedrooms}`
+                      : `At least ${aiFilters.bedrooms}`}
+                  </li>
+                  <li>
+                    Bathrooms:{" "}
+                    {aiFilters.bathrooms == null
+                      ? "Any"
+                      : aiFilters.exactBathrooms
+                      ? `Exactly ${aiFilters.bathrooms}`
+                      : `At least ${aiFilters.bathrooms}`}
+                  </li>
+                  <li>
+                    Backyard:{" "}
+                    {aiFilters.hasBackyard == null
+                      ? "Any"
+                      : aiFilters.hasBackyard
+                      ? "Must have a backyard"
+                      : "Backyard not required"}
+                  </li>
+                  <li>
+                    Quiet:{" "}
+                    {aiFilters.minQuietScore == null
+                      ? "Any"
+                      : `Quiet score \u2265 ${aiFilters.minQuietScore}`}
+                  </li>
+                  <li>
+                    Price:{" "}
+                    {aiFilters.minPrice == null && aiFilters.maxPrice == null
+                      ? "Any"
+                      : aiFilters.minPrice != null && aiFilters.maxPrice != null
+                      ? `$${aiFilters.minPrice} - $${aiFilters.maxPrice} / night`
+                      : aiFilters.minPrice != null
+                      ? `From $${aiFilters.minPrice} / night`
+                      : `Up to $${aiFilters.maxPrice} / night`}
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}

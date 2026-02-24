@@ -33,6 +33,7 @@ public class AIController {
                     .invalidQuery(true)
                     .message(filter.getInvalidMessage() != null ? filter.getInvalidMessage() : "Your input doesn't seem related to listing search. Please try again with a search about location, bedrooms, or other listing criteria.")
                     .showQuietScore(false)
+                    .filters(filter)
                     .build();
         }
 
@@ -53,6 +54,7 @@ public class AIController {
                 .invalidQuery(false)
                 .message(null)
                 .showQuietScore(showQuietScore)
+                .filters(filter)
                 .build();
     }
 }
