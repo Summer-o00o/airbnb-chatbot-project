@@ -1,7 +1,6 @@
 package com.airbnb.chatbot.service;
 
 import com.airbnb.chatbot.repository.ListingRepository;
-import com.airbnb.chatbot.model.entity.Listing;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,17 +36,27 @@ public class SearchService {
     public List<ListingDTO> searchWithFilters(
             String location,
             Integer bedrooms,
+            Boolean exactBedrooms,
+            Integer bathrooms,
+            Boolean exactBathrooms,
             Boolean hasBackyard,
-            Double minQuietScore
+            Double minQuietScore,
+            Double minPrice,
+            Double maxPrice
     ) {
         return listingRepository.findAll().stream()
                 .map(listingMapper::toDTO)
                 .filter(dto -> location == null ||
                         (dto.getLocation() != null && dto.getLocation().equalsIgnoreCase(location)))
-                .filter(dto -> bedrooms == null || dto.getBedrooms() == bedrooms)
+                .filter(dto -> bedrooms == null ||
+                        (Boolean.TRUE.equals(exactBedrooms) ? dto.getBedrooms() == bedrooms : dto.getBedrooms() >= bedrooms))
+                .filter(dto -> bathrooms == null ||
+                        (Boolean.TRUE.equals(exactBathrooms) ? dto.getBathrooms() == bathrooms : dto.getBathrooms() >= bathrooms))
                 .filter(dto -> hasBackyard == null || dto.isHasBackyard() == hasBackyard)
                 .filter(dto -> minQuietScore == null ||
                         (dto.getQuietScore() != null && dto.getQuietScore() >= minQuietScore))
+                .filter(dto -> minPrice == null || dto.getPrice() >= minPrice)
+                .filter(dto -> maxPrice == null || dto.getPrice() <= maxPrice)
                 .toList();
     }
 }

@@ -1,0 +1,259 @@
+import { useState, useEffect } from "react";
+
+const API_BASE = "http://localhost:8000";
+
+function App() {
+  const [query, setQuery] = useState("");
+  const [listings, setListings] = useState([]);
+  const [defaultListings, setDefaultListings] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [lastSearchedQuery, setLastSearchedQuery] = useState("");
+  const [invalidQueryMessage, setInvalidQueryMessage] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showQuietScore, setShowQuietScore] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/ai/search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: "Seattle" }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const list = Array.isArray(data) ? data : (data?.listings ?? []);
+        setDefaultListings(list.slice(0, 8));
+      })
+      .catch(() => setDefaultListings([]));
+  }, []);
+
+  const handleSearch = () => {
+    setHasSearched(true);
+    setLastSearchedQuery(query);
+    setInvalidQueryMessage(null);
+    setListings([]);
+    setIsSearching(true);
+    fetch(`${API_BASE}/ai/search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const list = Array.isArray(data) ? data : (data?.listings ?? []);
+        setListings(list);
+        if (data?.invalidQuery && data?.message) {
+          setInvalidQueryMessage(data.message);
+        }
+        setShowQuietScore(Boolean(data?.showQuietScore));
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setIsSearching(false));
+  };
+
+  const goHome = () => {
+    setListings([]);
+    setQuery("");
+    setHasSearched(false);
+    setInvalidQueryMessage(null);
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "600px",
+          margin: "0 auto",
+          textAlign: "center",
+        }}
+      >
+        <h1 onClick={goHome} style={{ cursor: "pointer" }}>
+          Airbnb AI
+        </h1>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Ask for a quiet place in Seattle..."
+          style={{
+            width: "500px",
+            padding: "15px",
+            fontSize: "16px",
+            borderRadius: "30px",
+            border: "1px solid #ccc",
+            outline: "none",
+          }}
+        />
+        <button
+          onClick={handleSearch}
+          style={{
+            marginTop: "16px",
+            padding: "12px 24px",
+            fontSize: "16px",
+            borderRadius: "8px",
+            border: "none",
+            backgroundColor: "#ff5a5f",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+      </div>
+
+      {!hasSearched && defaultListings.length > 0 && (
+        <div
+          style={{
+            maxWidth: "1600px",
+            width: "85%",
+            margin: "40px auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "16px",
+          }}
+        >
+          {defaultListings.map((listing) => (
+            <div
+              key={listing.id}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                padding: "16px",
+                textAlign: "left",
+              }}
+            >
+              <img
+                src={`https://picsum.photos/400/250?random=${listing.id}`}
+                alt={listing.title}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                  borderRadius: "12px",
+                  marginBottom: "12px",
+                }}
+              />
+              <h3 style={{ margin: 0, fontSize: "1rem" }}>{listing.title}</h3>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {hasSearched && isSearching && (
+        <div
+          style={{
+            maxWidth: "1600px",
+            width: "85%",
+            margin: "40px auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "200px",
+          }}
+        >
+          <p style={{ textAlign: "center", color: "#666" }}>Searching...</p>
+        </div>
+      )}
+
+      {hasSearched && !isSearching && listings.length === 0 && (
+        <div
+          style={{
+            maxWidth: "1600px",
+            width: "85%",
+            margin: "40px auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "200px",
+          }}
+        >
+          <div style={{ textAlign: "center", maxWidth: "500px" }}>
+            <h3>AI Summary</h3>
+            <p>
+              {invalidQueryMessage
+                ? invalidQueryMessage
+                : lastSearchedQuery.trim()
+                  ? `No listings match your search for "${lastSearchedQuery.trim()}". Try different criteria or broaden your search.`
+                  : "No listings found. Try adjusting your search."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {listings.length > 0 && (
+        <div
+          style={{
+            maxWidth: "1600px",
+            width: "85%",
+            margin: "40px auto",
+            display: "flex",
+            gap: "40px",
+          }}
+        >
+          <div
+            style={{
+              width: "70%",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+            }}
+          >
+            {listings.map((listing) => (
+              <div
+                key={listing.id}
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  textAlign: "left",
+                }}
+              >
+                <img
+                  src={`https://picsum.photos/400/250?random=${listing.id}`}
+                  alt={listing.title}
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "cover",
+                    borderRadius: "12px",
+                    marginBottom: "12px",
+                  }}
+                />
+                <h3>{listing.title}</h3>
+                <p>{listing.location}</p>
+                <p>
+                  {listing.bedrooms ?? 0} bedrooms · {listing.bathrooms ?? 0}{" "}
+                  {listing.bathrooms > 1 ? "baths" : "bath"}
+                </p>
+                {showQuietScore && (
+                  <p>
+                    Quiet Score:{" "}
+                    {listing.quietScore != null
+                      ? Number(listing.quietScore).toFixed(2)
+                      : "No reviews"}{" "}
+                    ({listing.reviewCount ?? 0})
+                  </p>
+                )}
+                <p style={{ fontWeight: "bold" }}>${listing.price} / night</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ width: "30%" }}>
+            <h3>AI Summary</h3>
+            <p>
+              {lastSearchedQuery.trim()
+                ? `Based on your search for "${lastSearchedQuery.trim()}", we found ${listings.length} ${listings.length === 1 ? "listing" : "listings"} that match your needs.`
+                : `We found ${listings.length} ${listings.length === 1 ? "listing" : "listings"} for you.`}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;

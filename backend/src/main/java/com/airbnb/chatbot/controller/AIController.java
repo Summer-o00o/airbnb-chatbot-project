@@ -2,9 +2,8 @@ package com.airbnb.chatbot.controller;
 
 import com.airbnb.chatbot.model.dto.AIFilter;
 import com.airbnb.chatbot.model.dto.AIQueryRequest;
+import com.airbnb.chatbot.model.dto.AISearchResponse;
 import com.airbnb.chatbot.model.dto.ListingDTO;
-import com.airbnb.chatbot.model.entity.Listing;
-import com.airbnb.chatbot.model.mapper.ListingMapper;
 import com.airbnb.chatbot.service.AIService;
 import com.airbnb.chatbot.service.SearchService;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ai")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AIController {
 
     private final AIService aiService;
@@ -24,15 +24,35 @@ public class AIController {
     }
 
     @PostMapping("/search")
-    public List<ListingDTO> aiSearch(@RequestBody AIQueryRequest request) {
+    public AISearchResponse aiSearch(@RequestBody AIQueryRequest request) {
         AIFilter filter = aiService.askAI(request.getQuery());
 
-        return searchService.searchWithFilters(
+        if (Boolean.TRUE.equals(filter.getInvalidQuery())) {
+            return AISearchResponse.builder()
+                    .listings(List.of())
+                    .invalidQuery(true)
+                    .message(filter.getInvalidMessage() != null ? filter.getInvalidMessage() : "Your input doesn't seem related to listing search. Please try again with a search about location, bedrooms, or other listing criteria.")
+                    .showQuietScore(false)
+                    .build();
+        }
+
+        List<ListingDTO> listings = searchService.searchWithFilters(
                 filter.getLocation(),
                 filter.getBedrooms(),
+                filter.getExactBedrooms(),
+                filter.getBathrooms(),
+                filter.getExactBathrooms(),
                 filter.getHasBackyard(),
-                filter.getMinQuietScore()
+                filter.getMinQuietScore(),
+                filter.getMinPrice(),
+                filter.getMaxPrice()
         );
+        boolean showQuietScore = filter.getMinQuietScore() != null;
+        return AISearchResponse.builder()
+                .listings(listings)
+                .invalidQuery(false)
+                .message(null)
+                .showQuietScore(showQuietScore)
+                .build();
     }
-
 }
