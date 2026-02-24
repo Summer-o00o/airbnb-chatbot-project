@@ -167,6 +167,12 @@ function App() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+              e.preventDefault();
+              if (!isSearching) handleSearch();
+            }
+          }}
           placeholder="Ask for a quiet place in Seattle..."
           style={{
             width: "500px",
