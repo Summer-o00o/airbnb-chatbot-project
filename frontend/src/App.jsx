@@ -106,8 +106,20 @@ function App() {
   }, []);
 
   const handleSearch = () => {
+    const trimmedQuery = query.trim();
+
+    // If the user hasn't typed anything meaningful, just show the default/home view
+    if (!trimmedQuery) {
+      setHasSearched(false);
+      setLastSearchedQuery("");
+      setInvalidQueryMessage(null);
+      setListings([]);
+      setAiFilters(null);
+      return;
+    }
+
     setHasSearched(true);
-    setLastSearchedQuery(query);
+    setLastSearchedQuery(trimmedQuery);
     setInvalidQueryMessage(null);
     setListings([]);
     setAiFilters(null);
