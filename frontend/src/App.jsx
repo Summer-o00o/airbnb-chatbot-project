@@ -2,6 +2,71 @@ import { useState, useEffect } from "react";
 
 const API_BASE = "/api";
 
+function ListingSkeleton({ count = 8, columns = 4, showSubtext = false }) {
+  return (
+    <div
+      style={{
+        maxWidth: "1600px",
+        width: "85%",
+        margin: "40px auto",
+        display: "grid",
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gap: "16px",
+      }}
+    >
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="skeleton-card">
+          <div
+            className="skeleton"
+            style={{
+              width: "100%",
+              height: "200px",
+              borderRadius: "12px",
+              marginBottom: "12px",
+            }}
+          />
+          <div
+            className="skeleton"
+            style={{
+              height: "18px",
+              width: "85%",
+              marginBottom: "8px",
+            }}
+          />
+          {showSubtext && (
+            <>
+              <div
+                className="skeleton"
+                style={{
+                  height: "14px",
+                  width: "60%",
+                  marginBottom: "6px",
+                }}
+              />
+              <div
+                className="skeleton"
+                style={{
+                  height: "14px",
+                  width: "45%",
+                  marginBottom: "6px",
+                }}
+              />
+              <div
+                className="skeleton"
+                style={{
+                  height: "16px",
+                  width: "35%",
+                  marginTop: "8px",
+                }}
+              />
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function App() {
   const [query, setQuery] = useState("");
   const [listings, setListings] = useState([]);
@@ -11,6 +76,7 @@ function App() {
   const [invalidQueryMessage, setInvalidQueryMessage] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [showQuietScore, setShowQuietScore] = useState(false);
+  const [isLoadingDefault, setIsLoadingDefault] = useState(true);
 
   useEffect(() => {
     fetch(`${API_BASE}/ai/search`, {
@@ -34,7 +100,8 @@ function App() {
       .catch((err) => {
         console.error("[Default listings]", err);
         setDefaultListings([]);
-      });
+      })
+      .finally(() => setIsLoadingDefault(false));
   }, []);
 
   const handleSearch = () => {
@@ -127,7 +194,15 @@ function App() {
         </button>
       </div>
 
-      {!hasSearched && defaultListings.length > 0 && (
+      {!hasSearched && isLoadingDefault && (
+        <>
+          <div style={{ marginTop: "8px", marginBottom: "-24px", textAlign: "center" }}>
+<p className="loading-hint">Loading Seattle stays…</p>
+          </div>
+          <ListingSkeleton count={8} columns={4} />
+        </>
+      )}
+      {!hasSearched && !isLoadingDefault && defaultListings.length > 0 && (
         <div
           style={{
             maxWidth: "1600px",
@@ -166,19 +241,12 @@ function App() {
       )}
 
       {hasSearched && isSearching && (
-        <div
-          style={{
-            maxWidth: "1600px",
-            width: "85%",
-            margin: "40px auto",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "200px",
-          }}
-        >
-          <p style={{ textAlign: "center", color: "#666" }}>Searching...</p>
-        </div>
+        <>
+          <div style={{ marginTop: "8px", marginBottom: "-24px", textAlign: "center" }}>
+            <p className="loading-hint">Finding stays for you…</p>
+          </div>
+          <ListingSkeleton count={6} columns={2} showSubtext />
+        </>
       )}
 
       {hasSearched && !isSearching && listings.length === 0 && (
