@@ -17,6 +17,10 @@ public class AIService {
     private String openAIApiKey;
 
     public AIFilter askAI(String userQuery) {
+        if (openAIApiKey == null || openAIApiKey.isBlank()) {
+            throw new IllegalStateException(
+                "OpenAI API key is not set. For Docker: set OPENAI_API_KEY in docker/.env or run: OPENAI_API_KEY=your-key docker compose up");
+        }
         String apiUrl = "https://api.openai.com/v1/chat/completions";
 
         RestTemplate restTemplate = new RestTemplate();
@@ -117,6 +121,10 @@ public class AIService {
     }
 
     public double generateQuietScore(String reviewText) {
+        if (openAIApiKey == null || openAIApiKey.isBlank()) {
+            throw new IllegalStateException(
+                "OpenAI API key is not set. For Docker: set OPENAI_API_KEY in docker/.env or run: OPENAI_API_KEY=your-key docker compose up");
+        }
         String apiUrl = "https://api.openai.com/v1/chat/completions";
 
         RestTemplate restTemplate = new RestTemplate();

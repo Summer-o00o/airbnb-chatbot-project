@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "/api";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -18,12 +18,23 @@ function App() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: "Seattle" }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            console.error("[Default listings] API error", res.status, text);
+            throw new Error(`${res.status}: ${text.slice(0, 200)}`);
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         const list = Array.isArray(data) ? data : (data?.listings ?? []);
         setDefaultListings(list.slice(0, 8));
       })
-      .catch(() => setDefaultListings([]));
+      .catch((err) => {
+        console.error("[Default listings]", err);
+        setDefaultListings([]);
+      });
   }, []);
 
   const handleSearch = () => {
@@ -37,7 +48,15 @@ function App() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            console.error("[Search] API error", res.status, text);
+            throw new Error(`${res.status}: ${text.slice(0, 200)}`);
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         const list = Array.isArray(data) ? data : (data?.listings ?? []);
         setListings(list);
@@ -46,7 +65,10 @@ function App() {
         }
         setShowQuietScore(Boolean(data?.showQuietScore));
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error("[Search]", err);
+        setInvalidQueryMessage(err.message || "Search failed. Check console and backend logs.");
+      })
       .finally(() => setIsSearching(false));
   };
 
