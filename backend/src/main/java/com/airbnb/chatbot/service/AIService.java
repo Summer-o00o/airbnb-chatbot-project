@@ -45,13 +45,15 @@ public class AIService {
         If the query IS about listing search, set invalidQuery: false and invalidMessage: null. Then extract filters below.
         
         Rules for bedrooms:
-        - DEFAULT: Treat as EXACT number. "2 bedrooms", "with 2 bedrooms", "3 bedrooms" -> bedrooms: N, exactBedrooms: true (return only listings with exactly that many).
-        - Set exactBedrooms: false when user asks for minimum: "at least 1", "1+", "1+ bedrooms", "at least 2", "2+ bedrooms", "minimum 2", "2 or more", "不少于两间" -> bedrooms: N, exactBedrooms: false (return listings with >= N).
+        - GENERAL: Use natural language understanding to decide if the user means "at least N" or "exactly N". When it is ambiguous (for example, "2 bedrooms in Seattle"), PREFER treating it as a minimum so the user sees N or more bedrooms.
+        - MINIMUM (>= N): For phrases like "2 bedrooms", "with 2 bedrooms", "3 bedrooms", "2+ bedrooms", "at least 2 bedrooms", "minimum 2 bedrooms", "2 or more bedrooms", "2+ bdr", "不少于两间", set bedrooms: N and exactBedrooms: false (return listings with >= N).
+        - EXACT (= N): Only set exactBedrooms: true when the user clearly wants exactly N and not more, e.g. "exactly 2 bedrooms", "only 2 bedrooms", "no more than 2 bedrooms", "maximum 2 bedrooms".
         - If no bedroom requirement, set bedrooms: null, exactBedrooms: null.
         
         Rules for bathrooms:
-        - DEFAULT: Treat as EXACT number. "2 bathrooms", "with 2 bathrooms", "1 bathroom" -> bathrooms: N, exactBathrooms: true (return only listings with exactly that many).
-        - Set exactBathrooms: false when user asks for minimum: "at least 1 bathroom", "1+", "1+ bathrooms", "at least 2 bathrooms", "2+ bathrooms", "minimum 2 bathrooms", "2 or more bathrooms" -> bathrooms: N, exactBathrooms: false (return listings with >= N).
+        - GENERAL: Same pattern as bedrooms. Use your judgment and prefer a minimum when ambiguous.
+        - MINIMUM (>= N): For phrases like "2 bathrooms", "with 2 bathrooms", "1 bathroom", "2+ bathrooms", "at least 2 bathrooms", "minimum 2 bathrooms", "2 or more bathrooms", etc., set bathrooms: N and exactBathrooms: false (return listings with >= N).
+        - EXACT (= N): Only set exactBathrooms: true when the user clearly wants exactly N and not more, e.g. "exactly 2 bathrooms", "only 2 bathrooms", "no more than 2 bathrooms", "maximum 2 bathrooms".
         - If no bathroom requirement, set bathrooms: null, exactBathrooms: null.
         
         Rules for quiet:
