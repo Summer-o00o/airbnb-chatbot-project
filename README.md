@@ -2,11 +2,14 @@
 
 ## Overview
 
-Airbnb AI Chatbot is a full-stack application that provides an intelligent chatbot interface for Airbnb-related queries and interactions.
+Airbnb AI Chatbot is a full-stack application that lets you search Airbnb-style listings using natural language (for example, “quiet place in Seattle under 200”).
+
+- It converts your free-text query into structured filters (location, bedrooms, bathrooms, backyard, price range, quietness).
+- It ranks listings using a precomputed quietness score (\(0\)–\(10\)) based on review text.
 
 ## Architecture
 
-The project follows a microservices architecture with separate backend and frontend services:
+This repository contains a full-stack app with separate backend and frontend services:
 
 - **Backend**: Spring Boot REST API
 - **Frontend**: React single-page application
@@ -25,63 +28,35 @@ The backend is a Spring Boot application built with Maven.
 - PostgreSQL Driver
 - Lombok
 
-**Project Structure:**
-```
-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/com/airbnb/chatbot/
-│   │   │   ├── ChatbotApplication.java
-│   │   │   ├── controller/
-│   │   │   ├── service/
-│   │   │   ├── repository/
-│   │   │   ├── config/
-│   │   │   └── model/
-│   │   │       ├── entity/
-│   │   │       └── dto/
-│   │   └── resources/
-│   │       └── application.yml
-└── pom.xml
-```
-
 **Running the Backend:**
 ```bash
 cd backend
 mvn spring-boot:run
 ```
+By default the backend will start on `http://localhost:8000`.
 
-The backend will start on `http://localhost:8080`.
+The app expects a PostgreSQL database (see `src/main/resources/application.properties`) and an OpenAI API key:
+
+- For local development, copy `src/main/resources/application-local.properties.example` to `application-local.properties` and set `openai.api.key`.
+- Alternatively, export `OPENAI_API_KEY` in your shell; the backend maps it to `openai.api.key`.
 
 ## Frontend
 
-The frontend is a React application created with Create React App.
+The frontend is a React application built with Vite.
 
 **Technology Stack:**
-- React 18.2.0
-- React DOM 18.2.0
-- React Scripts 5.0.1
+- React 19
+- React DOM 19
+- Vite 7
 
-**Project Structure:**
-```
-frontend/
-├── public/
-│   └── index.html
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── App.js
-│   └── index.js
-└── package.json
-```
-
-**Running the Frontend:**
+**Running the Frontend (Vite dev server):**
 ```bash
 cd frontend
 npm install
-npm start
+npm run dev
 ```
 
-The frontend will start on `http://localhost:3000`.
+The Vite dev server will start on `http://localhost:5173` by default. All requests to `/api/...` are proxied to the backend at `http://localhost:8000`, so you normally do not need to configure CORS manually for local development.
 
 ## Docker
 
@@ -101,12 +76,13 @@ The project includes Docker configuration for containerized deployment.
 **Running with Docker Compose:**
 ```bash
 cd docker
-docker-compose up --build
+cp .env.example .env   # then edit .env and set OPENAI_API_KEY
+docker compose up --build
 ```
 
 This will start all services:
 - PostgreSQL on port `5432`
-- Backend API on port `8080`
+- Backend API on port `8000`
 - Frontend on port `3000`
 
 ## Setup Instructions
@@ -130,15 +106,18 @@ This will start all services:
    ```bash
    cd frontend
    npm install
-   npm start
+   npm run dev
    ```
+
+With both backend (`http://localhost:8000`) and frontend (`http://localhost:5173`) running, you can open the app in your browser and start asking for places to stay in natural language.
 
 ### Docker Setup
 
 1. **Build and Run:**
    ```bash
    cd docker
-   docker-compose up --build
+   cp .env.example .env   # set OPENAI_API_KEY inside
+   docker compose up --build
    ```
 
 2. **Stop Services:**
