@@ -1,0 +1,62 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.loadingHint {
+  margin-top: 8px;
+  margin-bottom: -24px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-color-scheme: light) {
+  .loadingHint {
+    color: rgba(0, 0, 0, 0.45);
+  }
+}
+
+.defaultListingsGrid {
+  max-width: 1600px;
+  width: 85%;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.emptyStateWrapper {
+  max-width: 1600px;
+  width: 85%;
+  margin: 40px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.emptyStateInner {
+  max-width: 520px;
+  width: 100%;
+}
+
+.resultsLayout {
+  max-width: 1600px;
+  width: 85%;
+  margin: 40px auto;
+  display: flex;
+  gap: 40px;
+}
+
+.resultsGrid {
+  width: 70%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sidebar {
+  width: 30%;
+}
