@@ -174,6 +174,12 @@ Inside one workflow, it uses GitHub Actions `needs` dependencies so the Actions 
 
 This is the workflow to look at if you want the step-by-step arrows in GitHub rather than separate workflow runs.
 
+### App Demo
+
+Animated demo of the application running locally after the pipeline deploys the latest version to Kubernetes.
+
+![Airbnb AI Chatbot app demo](docs/images/app-demo.gif)
+
 ### Pipeline Screenshot
 
 Below is an example `Main Pipeline` run in GitHub Actions, showing the staged flow from test jobs to image publishing and then Kubernetes deployment.
