@@ -163,7 +163,7 @@ It currently verifies:
 - backend tests with Maven
 - frontend dependency install, build, and lint
 - Docker build smoke tests for the backend and frontend images
-- Kubernetes manifest validation with `kubectl apply --dry-run=client`
+- Kubernetes manifest validation with `kubeconform`
 
 ### Prerequisites
 

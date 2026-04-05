@@ -93,12 +93,11 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v5
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
-
       - name: Validate Kubernetes manifests
         run: |
-          kubectl apply --dry-run=client -f k8s/namespace.yaml
-          kubectl apply --dry-run=client -f k8s/postgres.yaml
-          kubectl apply --dry-run=client -f k8s/backend.yaml
-          kubectl apply --dry-run=client -f k8s/frontend.yaml
+          docker run --rm -v "$PWD:/work" ghcr.io/yannh/kubeconform:latest \
+            -summary \
+            /work/k8s/namespace.yaml \
+            /work/k8s/postgres.yaml \
+            /work/k8s/backend.yaml \
+            /work/k8s/frontend.yaml
