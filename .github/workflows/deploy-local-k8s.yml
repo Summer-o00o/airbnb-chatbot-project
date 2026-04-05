@@ -40,13 +40,15 @@ jobs:
         id: vars
         shell: bash
         run: |
+          REPO_LOWER="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             IMAGE_TAG="${{ github.event.inputs.image_tag }}"
           else
             IMAGE_TAG="sha-${{ github.event.workflow_run.head_sha }}"
           fi
 
-          IMAGE_BASE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          IMAGE_BASE="ghcr.io/${REPO_LOWER}"
           echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
           echo "backend_image=${IMAGE_BASE}-backend:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
           echo "frontend_image=${IMAGE_BASE}-frontend:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
