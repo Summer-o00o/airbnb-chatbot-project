@@ -1,0 +1,95 @@
+<svg width="1280" height="860" viewBox="0 0 1280 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="860" fill="#F7F4EE"/>
+  <rect x="32" y="32" width="1216" height="796" rx="28" fill="#FFFDFC" stroke="#D7D0C5" stroke-width="2"/>
+
+  <text x="72" y="96" fill="#1F2937" font-family="Helvetica, Arial, sans-serif" font-size="34" font-weight="700">Airbnb AI Chatbot Architecture</text>
+  <text x="72" y="128" fill="#5B6470" font-family="Helvetica, Arial, sans-serif" font-size="18">Runtime request flow on top, deployment pipeline on the bottom.</text>
+
+  <rect x="72" y="162" width="1136" height="284" rx="24" fill="#F4EFE6" stroke="#E1D7C9" stroke-width="2"/>
+  <text x="98" y="204" fill="#9A5B2C" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700">Runtime Flow</text>
+
+  <rect x="96" y="250" width="196" height="112" rx="22" fill="#FFF7ED" stroke="#F59E0B" stroke-width="2"/>
+  <text x="194" y="296" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700">User Browser</text>
+  <text x="194" y="326" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="17">Searches with natural</text>
+  <text x="194" y="350" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="17">language queries</text>
+
+  <rect x="344" y="228" width="250" height="156" rx="24" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+  <text x="469" y="276" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700">Frontend</text>
+  <text x="469" y="306" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">React + Vite UI</text>
+  <text x="469" y="332" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">Served by Nginx</text>
+  <text x="469" y="358" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">Proxies /api to backend</text>
+
+  <rect x="650" y="228" width="284" height="156" rx="24" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+  <text x="792" y="276" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700">Backend API</text>
+  <text x="792" y="306" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">Spring Boot REST service</text>
+  <text x="792" y="332" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">Calls OpenAI to extract</text>
+  <text x="792" y="358" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">structured listing filters</text>
+
+  <rect x="976" y="190" width="196" height="96" rx="22" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+  <text x="1074" y="230" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700">OpenAI API</text>
+  <text x="1074" y="254" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="15">Natural language</text>
+  <text x="1074" y="274" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="15">to filters</text>
+
+  <rect x="976" y="318" width="196" height="96" rx="22" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+  <text x="1074" y="358" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700">PostgreSQL</text>
+  <text x="1074" y="382" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="15">Listing data +</text>
+  <text x="1074" y="402" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="15">quiet scores</text>
+
+  <line x1="292" y1="306" x2="344" y2="306" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="344,306 330,298 330,314" fill="#6B7280"/>
+
+  <line x1="594" y1="306" x2="650" y2="306" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="650,306 636,298 636,314" fill="#6B7280"/>
+
+  <line x1="934" y1="274" x2="976" y2="238" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="976,238 960,238 968,252" fill="#6B7280"/>
+
+  <line x1="934" y1="338" x2="976" y2="366" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="976,366 962,354 956,368" fill="#6B7280"/>
+
+  <text x="445" y="218" fill="#5B6470" font-family="Helvetica, Arial, sans-serif" font-size="16">Browser app</text>
+  <text x="726" y="218" fill="#5B6470" font-family="Helvetica, Arial, sans-serif" font-size="16">API + AI search</text>
+
+  <rect x="72" y="490" width="1136" height="286" rx="24" fill="#F2F6F9" stroke="#D7E2EA" stroke-width="2"/>
+  <text x="98" y="532" fill="#0F766E" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700">Delivery Pipeline</text>
+
+  <rect x="104" y="590" width="188" height="108" rx="22" fill="#FFF7ED" stroke="#FB923C" stroke-width="2"/>
+  <text x="198" y="634" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700">Git Push / PR</text>
+  <text x="198" y="664" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="17">Code changes trigger</text>
+  <text x="198" y="688" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="17">Actions workflows</text>
+
+  <rect x="352" y="566" width="258" height="156" rx="24" fill="#EEF2FF" stroke="#6366F1" stroke-width="2"/>
+  <text x="481" y="612" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700">GitHub Actions</text>
+  <text x="481" y="642" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">CI validates backend,</text>
+  <text x="481" y="668" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">frontend, Docker builds,</text>
+  <text x="481" y="694" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">and Kubernetes manifests</text>
+
+  <rect x="668" y="590" width="188" height="108" rx="22" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+  <text x="762" y="634" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700">GHCR</text>
+  <text x="762" y="664" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="17">Multi-arch frontend</text>
+  <text x="762" y="688" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="17">and backend images</text>
+
+  <rect x="912" y="558" width="256" height="172" rx="24" fill="#FFFBEB" stroke="#EAB308" stroke-width="2"/>
+  <text x="1040" y="604" text-anchor="middle" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700">Local Kubernetes</text>
+  <text x="1040" y="634" text-anchor="middle" fill="#6B7280" font-family="Helvetica, Arial, sans-serif" font-size="18">Docker Desktop cluster</text>
+
+  <rect x="948" y="660" width="62" height="40" rx="12" fill="#DBEAFE" stroke="#60A5FA" stroke-width="1.5"/>
+  <text x="960" y="686" fill="#1F2937" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700">FE</text>
+
+  <rect x="1010" y="660" width="62" height="40" rx="12" fill="#DCFCE7" stroke="#4ADE80" stroke-width="1.5"/>
+  <text x="1020" y="686" fill="#1F2937" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700">API</text>
+
+  <rect x="1072" y="660" width="62" height="40" rx="12" fill="#FEE2E2" stroke="#F87171" stroke-width="1.5"/>
+  <text x="1080" y="686" fill="#1F2937" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700">DB</text>
+
+  <line x1="292" y1="644" x2="352" y2="644" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="352,644 338,636 338,652" fill="#6B7280"/>
+
+  <line x1="610" y1="644" x2="668" y2="644" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="668,644 654,636 654,652" fill="#6B7280"/>
+
+  <line x1="856" y1="644" x2="912" y2="644" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="912,644 898,636 898,652" fill="#6B7280"/>
+
+  <text x="96" y="748" fill="#5B6470" font-family="Helvetica, Arial, sans-serif" font-size="16">The pipeline validates code, publishes images, and deploys to the local cluster that serves the app demo above.</text>
+</svg>

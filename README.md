@@ -7,6 +7,12 @@ Airbnb AI Chatbot is a full-stack application that lets you search Airbnb-style 
 - It converts your free-text query into structured filters (location, bedrooms, bathrooms, backyard, price range, quietness).
 - It ranks listings using a precomputed quietness score (\(0\)–\(10\)) based on review text.
 
+## App Demo
+
+Animated demo of the application running locally after the pipeline deploys the latest version to Kubernetes.
+
+![Airbnb AI Chatbot app demo](docs/images/app-demo.gif)
+
 ## Architecture
 
 This repository contains a full-stack app with separate backend and frontend services:
@@ -17,6 +23,8 @@ This repository contains a full-stack app with separate backend and frontend ser
 - **Containerization**: Docker and Docker Compose
 - **Local orchestration**: Kubernetes
 - **CI/CD**: GitHub Actions + GitHub Container Registry (GHCR)
+
+![Airbnb AI Chatbot architecture diagram](docs/images/architecture-diagram.svg)
 
 ## Backend
 
@@ -173,12 +181,6 @@ Inside one workflow, it uses GitHub Actions `needs` dependencies so the Actions 
 3. the local self-hosted runner deploys the tagged images to Kubernetes
 
 This is the workflow to look at if you want the step-by-step arrows in GitHub rather than separate workflow runs.
-
-### App Demo
-
-Animated demo of the application running locally after the pipeline deploys the latest version to Kubernetes.
-
-![Airbnb AI Chatbot app demo](docs/images/app-demo.gif)
 
 ### Pipeline Screenshot
 
