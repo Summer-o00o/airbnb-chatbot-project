@@ -33,6 +33,7 @@ frontend/coverage/
 
 .env
 .env.local
+docker/.env
 backend/src/main/resources/application-local.properties
 
 

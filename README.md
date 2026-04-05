@@ -129,3 +129,73 @@ With both backend (`http://localhost:8000`) and frontend (`http://localhost:5173
    ```bash
    docker-compose logs -f
    ```
+
+## Local Kubernetes + GitHub Actions
+
+This repo can also run on a local Kubernetes cluster and publish container images to GitHub Container Registry (GHCR).
+
+### What's Included
+
+- `k8s/namespace.yaml` - Namespace for local Kubernetes testing
+- `k8s/postgres.yaml` - PostgreSQL deployment, service, and PVC
+- `k8s/backend.yaml` - Spring Boot backend deployment and service
+- `k8s/frontend.yaml` - React frontend deployment and service
+- `.github/workflows/publish-images.yml` - Builds and pushes backend/frontend images to GHCR
+- `.github/workflows/deploy-local-k8s.yml` - Deploys the app to a local Kubernetes cluster from a self-hosted GitHub Actions runner
+
+### Prerequisites
+
+- Docker Desktop with Kubernetes enabled, or another local Kubernetes cluster
+- `kubectl` configured to talk to that local cluster
+- A GitHub repository for this project
+- A self-hosted GitHub Actions runner on the same machine as your local Kubernetes cluster
+
+### Required GitHub Secrets
+
+Add these repository secrets before using the workflows:
+
+- `OPENAI_API_KEY` - OpenAI API key for the backend
+- `GHCR_USERNAME` - Optional GitHub username for private GHCR image pulls
+- `GHCR_PAT` - Optional personal access token with at least `read:packages` when GHCR images are private
+
+### Publish Images To GHCR
+
+The `Publish Images` workflow builds and pushes two images:
+
+- `ghcr.io/<owner>/<repo>-backend:latest`
+- `ghcr.io/<owner>/<repo>-frontend:latest`
+
+It also tags each image with `sha-<full-commit-sha>` so deployments can pin an exact build.
+
+### Deploy To Local Kubernetes
+
+The `Deploy To Local Kubernetes` workflow is designed for a `self-hosted` runner because GitHub-hosted runners cannot reach your laptop's local Kubernetes cluster.
+
+The deploy workflow will:
+
+- create/update the `airbnb-chatbot` namespace
+- create Kubernetes secrets for the OpenAI key and GHCR pull credentials
+- apply the manifests in `k8s/`
+- update the backend/frontend deployments to the newly published GHCR image tags
+
+If your GHCR package is public, `GHCR_USERNAME` and `GHCR_PAT` are not required.
+
+### Local Test Flow
+
+1. Push to `main` or manually run `Publish Images`.
+2. Let `Deploy To Local Kubernetes` run on your self-hosted runner, or trigger it manually and provide a tag like `latest` or `sha-<full-commit-sha>`.
+3. Port-forward the frontend service:
+   ```bash
+   kubectl port-forward -n airbnb-chatbot svc/frontend 3000:80
+   ```
+4. Open `http://localhost:3000`.
+
+### Useful Kubernetes Commands
+
+```bash
+kubectl get pods,svc -n airbnb-chatbot
+kubectl logs -n airbnb-chatbot deploy/backend
+kubectl logs -n airbnb-chatbot deploy/frontend
+kubectl logs -n airbnb-chatbot deploy/postgres
+kubectl delete namespace airbnb-chatbot
+```
