@@ -92,7 +92,7 @@ This will start all services:
 ### Prerequisites
 - Java 17 or higher
 - Maven 3.6+
-- Node.js 18+ and npm
+- Node.js 20+ and npm
 - Docker and Docker Compose (optional)
 
 ### Local Development Setup
@@ -138,10 +138,11 @@ This repo can also run on a local Kubernetes cluster and publish container image
 
 The currently implemented workflow is:
 
-1. Build backend and frontend images from GitHub Actions.
-2. Push those images to GHCR.
-3. Deploy the tagged images to a local Kubernetes cluster from a self-hosted GitHub Actions runner.
-4. Access the app locally with `kubectl port-forward`.
+1. Run CI checks for backend, frontend, Docker builds, and Kubernetes manifests.
+2. Build backend and frontend images from GitHub Actions.
+3. Push those images to GHCR.
+4. Deploy the tagged images to a local Kubernetes cluster from a self-hosted GitHub Actions runner.
+5. Access the app locally with `kubectl port-forward`.
 
 ### What's Included
 
@@ -149,8 +150,20 @@ The currently implemented workflow is:
 - `k8s/postgres.yaml` - PostgreSQL deployment, service, and PVC
 - `k8s/backend.yaml` - Spring Boot backend deployment and service
 - `k8s/frontend.yaml` - React frontend deployment and service
+- `.github/workflows/ci.yml` - Runs CI checks for backend, frontend, Docker builds, and Kubernetes manifests
 - `.github/workflows/publish-images.yml` - Builds and pushes backend/frontend images to GHCR
 - `.github/workflows/deploy-local-k8s.yml` - Deploys the app to a local Kubernetes cluster from a self-hosted GitHub Actions runner
+
+### CI Workflow
+
+The `CI` workflow runs on pull requests, manual dispatch, and pushes to `main`.
+
+It currently verifies:
+
+- backend tests with Maven
+- frontend dependency install, build, and lint
+- Docker build smoke tests for the backend and frontend images
+- Kubernetes manifest validation with `kubectl apply --dry-run=client`
 
 ### Prerequisites
 
