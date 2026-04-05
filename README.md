@@ -15,6 +15,8 @@ This repository contains a full-stack app with separate backend and frontend ser
 - **Frontend**: React single-page application
 - **Database**: PostgreSQL
 - **Containerization**: Docker and Docker Compose
+- **Local orchestration**: Kubernetes
+- **CI/CD**: GitHub Actions + GitHub Container Registry (GHCR)
 
 ## Backend
 
@@ -134,6 +136,13 @@ With both backend (`http://localhost:8000`) and frontend (`http://localhost:5173
 
 This repo can also run on a local Kubernetes cluster and publish container images to GitHub Container Registry (GHCR).
 
+The currently implemented workflow is:
+
+1. Build backend and frontend images from GitHub Actions.
+2. Push those images to GHCR.
+3. Deploy the tagged images to a local Kubernetes cluster from a self-hosted GitHub Actions runner.
+4. Access the app locally with `kubectl port-forward`.
+
 ### What's Included
 
 - `k8s/namespace.yaml` - Namespace for local Kubernetes testing
@@ -167,6 +176,11 @@ The `Publish Images` workflow builds and pushes two images:
 
 It also tags each image with `sha-<full-commit-sha>` so deployments can pin an exact build.
 
+The workflow is configured to publish multi-architecture images for:
+
+- `linux/amd64`
+- `linux/arm64`
+
 ### Deploy To Local Kubernetes
 
 The `Deploy To Local Kubernetes` workflow is designed for a `self-hosted` runner because GitHub-hosted runners cannot reach your laptop's local Kubernetes cluster.
@@ -179,6 +193,17 @@ The deploy workflow will:
 - update the backend/frontend deployments to the newly published GHCR image tags
 
 If your GHCR package is public, `GHCR_USERNAME` and `GHCR_PAT` are not required.
+
+### Verified Local Flow
+
+This setup has been tested locally with:
+
+- Docker Desktop Kubernetes
+- a self-hosted GitHub Actions runner running on the same machine
+- GHCR-hosted backend and frontend images
+- `kubectl port-forward -n airbnb-chatbot svc/frontend 3000:80`
+
+The backend was also verified in-cluster by querying `http://backend:8000/search/all`.
 
 ### Local Test Flow
 
@@ -199,3 +224,10 @@ kubectl logs -n airbnb-chatbot deploy/frontend
 kubectl logs -n airbnb-chatbot deploy/postgres
 kubectl delete namespace airbnb-chatbot
 ```
+
+### Lessons Learned
+
+- **A self-hosted runner is the simplest way to deploy from GitHub Actions into a local cluster.** GitHub-hosted runners can build and push images, but they cannot directly reach Docker Desktop Kubernetes on a laptop.
+- **Multi-arch images matter for local Kubernetes on Apple Silicon.** Publishing only `amd64` images caused pull failures on the local `arm64` cluster, so the GHCR workflow now builds both `linux/amd64` and `linux/arm64`.
+- **Public GHCR packages simplify local deploys.** For public images, Kubernetes can pull directly from GHCR without extra image pull secrets, which keeps the local setup lighter.
+- **Keeping service names aligned reduces config churn.** The frontend Nginx config already proxies `/api` to `backend:8000`, so naming the Kubernetes Service `backend` let the same pattern carry over cleanly.
