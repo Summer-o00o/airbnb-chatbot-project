@@ -1,0 +1,7 @@
+self-hosted-runner:
+  labels:
+    - local-k8s
+
+config-variables: null
+
+paths:

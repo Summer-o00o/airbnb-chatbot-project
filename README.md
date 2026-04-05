@@ -136,13 +136,11 @@ With both backend (`http://localhost:8000`) and frontend (`http://localhost:5173
 
 This repo can also run on a local Kubernetes cluster and publish container images to GitHub Container Registry (GHCR).
 
-The currently implemented workflow is:
+The current GitHub Actions setup has two layers:
 
-1. Run CI checks for backend, frontend, Docker builds, and Kubernetes manifests.
-2. Build backend and frontend images from GitHub Actions.
-3. Push those images to GHCR.
-4. Deploy the tagged images to a local Kubernetes cluster from a self-hosted GitHub Actions runner.
-5. Access the app locally with `kubectl port-forward`.
+1. `CI` for pull requests and non-`main` branch pushes.
+2. `Main Pipeline` for `main`, where GitHub shows a visible job graph:
+   `tests -> publish images -> deploy to local Kubernetes`
 
 ### What's Included
 
@@ -150,13 +148,12 @@ The currently implemented workflow is:
 - `k8s/postgres.yaml` - PostgreSQL deployment, service, and PVC
 - `k8s/backend.yaml` - Spring Boot backend deployment and service
 - `k8s/frontend.yaml` - React frontend deployment and service
-- `.github/workflows/ci.yml` - Runs CI checks for backend, frontend, Docker builds, and Kubernetes manifests
-- `.github/workflows/publish-images.yml` - Builds and pushes backend/frontend images to GHCR
-- `.github/workflows/deploy-local-k8s.yml` - Deploys the app to a local Kubernetes cluster from a self-hosted GitHub Actions runner
+- `.github/workflows/ci.yml` - Runs CI checks for pull requests and non-`main` branch pushes
+- `.github/workflows/main-pipeline.yml` - Runs the visible `test -> publish -> deploy` pipeline for `main`
 
 ### CI Workflow
 
-The `CI` workflow runs on pull requests, manual dispatch, and pushes to `main`.
+The `CI` workflow runs on pull requests, manual dispatch, and pushes to non-`main` branches.
 
 It currently verifies:
 
@@ -164,6 +161,18 @@ It currently verifies:
 - frontend dependency install, build, and lint
 - Docker build smoke tests for the backend and frontend images
 - Kubernetes manifest validation with `kubeconform`
+
+### Main Pipeline Workflow
+
+The `Main Pipeline` workflow runs on pushes to `main` and manual dispatch.
+
+Inside one workflow, it uses GitHub Actions `needs` dependencies so the Actions UI shows a real pipeline graph:
+
+1. backend tests, frontend checks, and Kubernetes manifest validation run first
+2. backend and frontend images are built and pushed to GHCR
+3. the local self-hosted runner deploys the tagged images to Kubernetes
+
+This is the workflow to look at if you want the step-by-step arrows in GitHub rather than separate workflow runs.
 
 ### Prerequisites
 
@@ -182,7 +191,7 @@ Add these repository secrets before using the workflows:
 
 ### Publish Images To GHCR
 
-The `Publish Images` workflow builds and pushes two images:
+The `Main Pipeline` workflow builds and pushes two images:
 
 - `ghcr.io/<owner>/<repo>-backend:latest`
 - `ghcr.io/<owner>/<repo>-frontend:latest`
@@ -196,9 +205,9 @@ The workflow is configured to publish multi-architecture images for:
 
 ### Deploy To Local Kubernetes
 
-The `Deploy To Local Kubernetes` workflow is designed for a `self-hosted` runner because GitHub-hosted runners cannot reach your laptop's local Kubernetes cluster.
+The deploy stage of `Main Pipeline` is designed for a `self-hosted` runner because GitHub-hosted runners cannot reach your laptop's local Kubernetes cluster.
 
-The deploy workflow will:
+The deploy stage will:
 
 - create/update the `airbnb-chatbot` namespace
 - create Kubernetes secrets for the OpenAI key and GHCR pull credentials
@@ -220,8 +229,8 @@ The backend was also verified in-cluster by querying `http://backend:8000/search
 
 ### Local Test Flow
 
-1. Push to `main` or manually run `Publish Images`.
-2. Let `Deploy To Local Kubernetes` run on your self-hosted runner, or trigger it manually and provide a tag like `latest` or `sha-<full-commit-sha>`.
+1. Push to `main`.
+2. Open the `Main Pipeline` workflow in GitHub Actions and watch the graph move from tests to publish to deploy.
 3. Port-forward the frontend service:
    ```bash
    kubectl port-forward -n airbnb-chatbot svc/frontend 3000:80
