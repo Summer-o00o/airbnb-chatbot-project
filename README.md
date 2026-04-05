@@ -58,6 +58,8 @@ The frontend is a React application built with Vite.
 - React 19
 - React DOM 19
 - Vite 7
+- Vitest
+- Testing Library
 
 **Running the Frontend (Vite dev server):**
 ```bash
@@ -67,6 +69,12 @@ npm run dev
 ```
 
 The Vite dev server will start on `http://localhost:5173` by default. All requests to `/api/...` are proxied to the backend at `http://localhost:8000`, so you normally do not need to configure CORS manually for local development.
+
+**Running Frontend Tests:**
+```bash
+cd frontend
+npm test
+```
 
 ## Docker
 
@@ -116,10 +124,24 @@ This will start all services:
    ```bash
    cd frontend
    npm install
+   npm test
    npm run dev
    ```
 
 With both backend (`http://localhost:8000`) and frontend (`http://localhost:5173`) running, you can open the app in your browser and start asking for places to stay in natural language.
+
+### Running Tests
+
+- **Backend tests**
+  ```bash
+  cd backend
+  mvn test
+  ```
+- **Frontend tests**
+  ```bash
+  cd frontend
+  npm test
+  ```
 
 ### Docker Setup
 
@@ -132,12 +154,12 @@ With both backend (`http://localhost:8000`) and frontend (`http://localhost:5173
 
 2. **Stop Services:**
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 3. **View Logs:**
    ```bash
-   docker-compose logs -f
+   docker compose logs -f
    ```
 
 ## Local Kubernetes + GitHub Actions
@@ -166,7 +188,7 @@ The `CI` workflow runs on pull requests, manual dispatch, and pushes to non-`mai
 It currently verifies:
 
 - backend tests with Maven
-- frontend dependency install, build, and lint
+- frontend dependency install, unit tests, build, and lint
 - Docker build smoke tests for the backend and frontend images
 - Kubernetes manifest validation with `kubeconform`
 
