@@ -174,6 +174,12 @@ Inside one workflow, it uses GitHub Actions `needs` dependencies so the Actions 
 
 This is the workflow to look at if you want the step-by-step arrows in GitHub rather than separate workflow runs.
 
+### Pipeline Screenshot
+
+Below is an example `Main Pipeline` run in GitHub Actions, showing the staged flow from test jobs to image publishing and then Kubernetes deployment.
+
+![GitHub Actions Main Pipeline graph](docs/images/main-pipeline.png)
+
 ### Prerequisites
 
 - Docker Desktop with Kubernetes enabled, or another local Kubernetes cluster
